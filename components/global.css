@@ -1,0 +1,108 @@
+.theme-dark, .theme-grey, .theme-grey-dark, .theme-light-dark, :root, [class*=theme-] .theme-dark, [class*=theme-] .theme-grey, [class*=theme-] .theme-grey-dark, [class*=theme-] .theme-light-dark {
+    --ts-color-text: #fff;
+    --ts-color-text-inverted: #191919;
+    --ts-color-link: #3fe;
+    --ts-color-muted: #787887;
+    --ts-color-disabled: #303036;
+    --ts-color-error: #ff3269;
+    --ts-color-text-rgb: 255, 255, 255;
+    --ts-opacity-semi-transparent: 0.1;
+}
+
+.gradient-top {
+    background-image: linear-gradient(180deg, rgba(25, 25, 25, .6) 0, hsla(0, 0%, 9%, .443) 19%, hsla(0, 0%, 8%, .325) 34%, hsla(0, 0%, 7%, .229) 47%, hsla(0, 0%, 6%, .167) 56.5%, hsla(0, 0%, 5%, .116) 65%, rgba(9, 9, 9, .076) 73%, rgba(6, 6, 6, .045) 80.2%, rgba(4, 4, 4, .025) 86.1%, rgba(2, 2, 2, .013) 91%, rgba(1, 1, 1, .005) 95.2%, rgba(0, 0, 0, .001) 98.2%, transparent);
+}
+
+.theme-transparent, [class*=theme-] .theme-transparent {
+    background-color: transparent;
+}
+
+.theme-dark, [class*=theme-] .theme-dark {
+    background-color: #000;
+}
+
+[class*=theme-] {
+    color: var(--ts-color-text);
+    transition: color .25s cubic-bezier(.4, 0, 1, 1), background-color .25s cubic-bezier(.4, 0, 1, 1);
+}
+
+.tidal-header-content {
+    line-height: 3rem;
+}
+
+.pr-small {
+    padding-right: .75rem !important;
+}
+
+.flex-grow {
+    flex-grow: 1;
+    max-width: 100%;
+}
+
+.text-dec-none {
+    text-decoration: none;
+}
+
+a {
+    background-color: transparent;
+    color: currentColor;
+    transition: color .25s ease-in-out;
+}
+
+a:hover {
+    color: var(--ts-color-link);
+}
+
+.sr-only {
+    height: 1px;
+    left: -100vw;
+    overflow: hidden;
+    position: absolute;
+    top: auto;
+    width: 1px;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.main-content {
+    outline: 0;
+}
+
+.header-wrapper {
+    /* height: screen; */
+    position: relative;
+    z-index: -1;
+    margin-top: -5.40rem;
+    background: linear-gradient(0deg, #000 10%, transparent 33%), url(../public/hero-bg-new.4fbbfd5.png) 50% / cover no-repeat;
+}
+
+.tidal-image-wrapper {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    max-width: 100%;
+    height: auto;
+    z-index: 1;
+}
+
+.tidal-lazy-image-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+}
+
+.slide-in {
+    animation: slide-in 1s ease-in-out;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
