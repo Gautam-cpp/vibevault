@@ -3,12 +3,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { authOptions } from "../auth/[...nextauth]/option";
 import { prisma } from "@/src/lib/prisma";
+import axios from "axios";
 
 const streamSchema = z.object({
     creatorId: z.string(),
     url: z.string(),
-    spaceId: z.string()
+    spaceId: z.string(),
+    type: z.string()
 })
+
+
+
+const isMusicVideo = async (videoId: string): Promise<string> => {
+    try {
+      const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.YOUTUBE_API_KEY}`;
+      const response = await axios.get(url);
+      const video = response.data.items[0];
+  
+      if (!video) {
+        return JSON.stringify({ 
+          isMusic: false, 
+          response: null 
+        });
+      }
+  
+      return JSON.stringify({ 
+        isMusic: video.snippet.categoryId === "10", 
+        response: response.data 
+      });
+    } catch (error) {
+      console.error("Error fetching YouTube video details:", error);
+      return JSON.stringify({ 
+        isMusic: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  };
+
+
 
 async function fetchSpotifyAccessToken() {
     const clientId = process.env.SPOTIFY_CLIENT_ID;
@@ -71,9 +103,19 @@ export async function POST(req: NextRequest) {
         // Fetch title and image based on platform
         let title = "";
         let image = "";
+
         if (isYoutube) {
-            const resYt = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${process.env.YOUTUBE_API_KEY}`);
-            const dataYt = await resYt.json();
+            const resYt = await isMusicVideo(videoId || "");
+            const parsedRes = JSON.parse(resYt);
+
+            if(!parsedRes.isMusic) {
+                return NextResponse.json({
+                    success: false,
+                    message: "Not a music Video"
+                }, { status: 400 });
+            }
+            
+            const dataYt = parsedRes.response;
             title = dataYt.items[0]?.snippet.title || "";
             image = dataYt.items[0]?.snippet.thumbnails.high.url || "";
         } else {
@@ -118,8 +160,8 @@ export async function POST(req: NextRequest) {
             const duplicateStream = await prisma.stream.findFirst({
                 where: {
                     userId: data.creatorId,
-                    title: title,
-                    createAt: { gte: tenMinutesAgo }
+                    url: data.url,
+                    // createAt: { gte: tenMinutesAgo }
                 }
             });
 
