@@ -16,6 +16,7 @@ const streamSchema = z.object({
 
 const isMusicVideo = async (videoId: string): Promise<string> => {
     try {
+        // console.log(process.env.YOUTUBE_API_KEY);
       const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.YOUTUBE_API_KEY}`;
       const response = await axios.get(url);
       const video = response.data.items[0];

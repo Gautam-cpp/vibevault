@@ -7,10 +7,10 @@ import { Prisma } from "@prisma/client";
 
 // Zod schema for space creation validation
 const spaceSchema = z.object({
-    spaceName: z.string().min(3).max(50)
-});
+    spaceName: z.string().trim().min(3).max(50)
+  });
 
-// Rate limiting configuration
+
 const MAX_SPACES_PER_USER = 5;
 
 export async function POST(req: NextRequest) {
@@ -27,7 +27,6 @@ export async function POST(req: NextRequest) {
         const user = session.user;
         const data = spaceSchema.parse(await req.json());
 
-        // Rate limiting check
         const userSpaceCount = await prisma.space.count({
             where: { hostId: user.id }
         });
@@ -39,17 +38,28 @@ export async function POST(req: NextRequest) {
             }, { status: 429 });
         }
 
+        const generateSharableSpaceId = () => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let sharableSpaceId = '';
+            for (let i = 0; i < 10; i++) {
+              const randomIndex = Math.floor(Math.random() * characters.length);
+              sharableSpaceId += characters.charAt(randomIndex);
+            }
+            return sharableSpaceId;
+          };
+
         const space = await prisma.space.create({
             data: {
                 name: data.spaceName,
                 hostId: user.id,
+                sharableId: generateSharableSpaceId()
             },
         });
 
         return NextResponse.json({
             success: true,
             message: "Space created successfully",
-            data: space,
+            space: space,
         }, { status: 200 });
 
     } catch (e) {
@@ -90,7 +100,6 @@ export async function DELETE(req: NextRequest) {
         );
       }
   
-      // Step 1: Retrieve the space to verify ownership
       const space = await prisma.space.findUnique({
         where: { id: spaceId },
       });
@@ -102,7 +111,6 @@ export async function DELETE(req: NextRequest) {
         );
       }
   
-      // Step 2: Delete the space using its unique id
       const deletedSpace = await prisma.space.delete({
         where: { id: spaceId },
       });
@@ -124,8 +132,7 @@ export async function DELETE(req: NextRequest) {
     }
   }
   
-
-export async function GET(req: NextRequest) {
+  export async function GET(req: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user?.id) {
@@ -138,55 +145,68 @@ export async function GET(req: NextRequest) {
         const spaceId = req.nextUrl.searchParams.get("spaceId");
 
         if (spaceId) {
-            const space = await prisma.space.findUnique({
-                where: { id: spaceId },
-                select: { hostId: true },
-            });
-
-            if (!space) {
+            if (!/^[a-z0-9-]{20,}$/i.test(spaceId)) {
                 return NextResponse.json(
-                    { success: false, message: "Space not found" },
-                    { status: 404 }
+                    { success: false, message: "Invalid space ID format" },
+                    { status: 400 }
                 );
             }
 
-            return NextResponse.json(
-                { 
-                    success: true, 
-                    message: "Host ID retrieved successfully", 
-                    isHost: space.hostId === session.user.id 
-                },
-                { status: 200 }
-            );
+            try {
+                const space = await prisma.space.findUniqueOrThrow({
+                    where: { id: spaceId },
+                    select: { 
+                        hostId: true,
+                        name: true,
+                    },
+                });
+
+                return NextResponse.json({
+                    success: true,
+                    hostId: space.hostId,
+                    isHost: space.hostId === session.user.id,
+                    spaceName: space.name,
+                }, { status: 200 });
+
+            } catch (error) {
+                if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+                    return NextResponse.json(
+                        { success: false, message: "Space not found" },
+                        { status: 404 }
+                    );
+                }
+                throw error;
+            }
         }
 
-        // Get paginated spaces with optimization
+        // Handle list of all spaces for current user
         const spaces = await prisma.space.findMany({
             where: { hostId: session.user.id },
-            take: 10,
-            // orderBy: { createAt: "desc" },
             select: {
                 id: true,
                 name: true,
-                // createAt: true
             }
         });
 
-        return NextResponse.json(
-            { 
-                success: true, 
-                message: "Spaces retrieved successfully", 
-                data: spaces 
-            },
-            { status: 200 }
-        );
+        return NextResponse.json({
+            success: true,
+            message: "Spaces retrieved successfully",
+            data: spaces
+        }, { status: 200 });
 
     } catch (error) {
-        console.error("Error retrieving space:", error);
+        console.error("Space API Error:", error);
+        
+        const errorMessage = error instanceof Error 
+            ? error.message 
+            : "Internal server error";
+
         return NextResponse.json(
             { 
                 success: false, 
-                message: "Internal server error" 
+                message: process.env.NODE_ENV === "development" 
+                    ? errorMessage 
+                    : "Internal server error" 
             },
             { status: 500 }
         );
