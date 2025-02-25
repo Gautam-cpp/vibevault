@@ -85,7 +85,7 @@ export default function AuthTabs() {
       })
 
       if (result?.error) throw new Error(result.error)
-      router.push('/dashboard')
+      router.push('/home')
     } catch (err: any) {
       setError(err.message)
       setLoading(false)
@@ -105,7 +105,7 @@ export default function AuthTabs() {
       })
 
       if (result?.error) throw new Error(result.error)
-      router.push('/dashboard')
+      router.push('/home')
     } catch (err: any) {
       setError(err.message)
       setLoading(false)
@@ -115,7 +115,7 @@ export default function AuthTabs() {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      await signIn('google', { callbackUrl: '/dashboard' })
+      await signIn('google', { callbackUrl: '/home' })
     } catch (err: any) {
       setError(err.message)
       setLoading(false)

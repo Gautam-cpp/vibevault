@@ -1,14 +1,15 @@
+"use client";
 import Appbar from "@/components/Appbar";
 import Dashboard from "@/components/Dashboard";
 
 
+
 export default function Home() {
-  return (
-    <div>
+ return (
+  <div>
+    <Appbar></Appbar>
+    <Dashboard></Dashboard>
 
-      <Appbar></Appbar>
-      <Dashboard></Dashboard>
-    </div>
-
-  );
+  </div>
+);
 }
