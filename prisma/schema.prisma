@@ -75,6 +75,7 @@ model Space {
   hostId        String
   host          User           @relation("hostedBy", fields: [hostId], references: [id])
   isActive      Boolean        @default(true)
+  sharableId    String
   currentStream CurrentStream?
 }
 
