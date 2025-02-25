@@ -9,11 +9,11 @@ export default function Appbar() {
     const { data: session } = useSession();
 
     return (
-        <header className="w-full bg-transparent">
+        <header className="w-full bg-transparent z-50">
             <div className="container mx-auto px-4 md:px-12 py-4 md:py-6 flex  md:flex-row items-center justify-between gap-4">
                 {/* Logo */}
                 <div className="flex items-center flex-shrink-0">
-                    <a href="/" className="text-decoration-none font-bold text-xl md:text-3xl text-white">
+                    <a href={session ? "/home" : "/"} className="text-decoration-none font-bold text-xl md:text-3xl text-white">
                         V i b e V a u l t
                     </a>
                 </div>
