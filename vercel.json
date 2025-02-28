@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
     "build": {
       "env": {
         "PRISMA_GENERATE": "true"
@@ -9,11 +8,5 @@
       }
     }
   }
-=======
-  "build": {
-    "env": {
-      "PRISMA_GENERATE": "true"
-    }
-  }
-}
->>>>>>> b1c33a117de5b454c251debe31c94d142f4e1466
+
+
