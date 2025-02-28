@@ -20,15 +20,23 @@ export default function Appbar() {
 
                 {/* User Info and Auth Controls */}
                 <div className="flex items-center gap-4">
-                    {/* User Greeting - hidden on mobile, visible from md up */}
+                    
                     {session && (
                         <div className="hidden md:block text-sm md:text-base">
                             Welcome, {session.user?.name?.split(" ")[0]}
                         </div>
                     )}
 
-                    {/* Auth Button */}
-                    <div className="flex items-center">
+                    
+                    <div className="flex items-center gap-10">
+                        <Button 
+                                className="bg-slate-100 text-black rounded-xl hover:bg-slate-300 text-sm md:text-base px-4 md:px-8 py-2"
+                            >
+                               <Link href="/about">
+                                   About
+                                </Link>
+                            </Button>
+
                         {session ? (
                             <Button 
                                 onClick={() => signOut()}
@@ -48,7 +56,7 @@ export default function Appbar() {
                         )}
                     </div>
 
-                    {/* Mobile User Greeting */}
+                   
                     {session && (
                         <div className="md:hidden text-sm">
                             Hi, {session.user?.name?.split(" ")[0]}

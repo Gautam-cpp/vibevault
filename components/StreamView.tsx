@@ -287,6 +287,7 @@ export default function StreamView({
           method: "GET",
         });
         const json = await data.json();
+        // console.log(json)
         setCurrentVideo(json.stream);
         setQueue((q) => q.filter((x) => x.id !== json.stream?.id));
       } catch (e) {
@@ -448,56 +449,7 @@ export default function StreamView({
 
     return null;
   };
-
-  const renderNowPlaying = () => {
-    if (!currentVideo) {
-      return (
-        <p className="text-center py-8 text-gray-400">
-          No music currently playing
-        </p>
-      );
-    }
-
-    if (currentVideo.type === 'youtube') {
-      return playVideo ? (
-        <div
-          ref={videoPlayerRef}
-          className="w-full aspect-video rounded-lg overflow-hidden"
-        />
-      ) : (
-        <>
-          <Image
-            src={currentVideo.bigImg}
-            className="w-full aspect-video object-cover rounded-md"
-            alt={currentVideo.title}
-            width={640}
-            height={360}
-          />
-          <p className="mt-2 text-center font-semibold text-white">
-            {currentVideo.title}
-          </p>
-        </>
-      );
-    }
-
-    if (currentVideo.type === 'spotify') {
-      return (
-        <div className="w-full">
-          <iframe
-            src={`https://open.spotify.com/embed/track/${currentVideo.extractedId}`}
-            width="100%"
-            height="80"
-            frameBorder="0"
-            allow="encrypted-media"
-            className="rounded-lg"
-            title="Now Playing Spotify Track"
-          />
-        </div>
-      );
-    }
-
-    return null;
-  };
+  
 
   interface YouTubeSearchResult {
     id: {
@@ -876,6 +828,7 @@ export default function StreamView({
                 </DialogFooter>
         </DialogContent>
       </Dialog>
+      
 
       {/* Background Effects */}
       <div className="fixed inset-0 -z-10">
