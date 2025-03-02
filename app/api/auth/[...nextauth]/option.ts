@@ -61,7 +61,7 @@ export const authOptions: NextAuthOptions = {
           token.provider = user.provider;
         } 
         // For OAuth providers, we need to find or create the user in our DB
-        else if (account && account.provider === "google") {
+        else if (account && account.provider === "Google") {
           token.provider = account.provider;
           
           // Find or create the user in the database

@@ -115,7 +115,7 @@ export default function AuthTabs() {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      await signIn('google', { 
+      await signIn('Google', { 
         callbackUrl: '/home',
        
       })
