@@ -1,4 +1,3 @@
-// components/SearchBar.tsx
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useToast } from '@/hooks/use-toast';
 
 interface YouTubeSearchResult {
   id: {
@@ -39,7 +39,53 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<YouTubeSearchResult | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const {toast} = useToast()
+
+
+  const getSearchCount = () => {
+    const searchData = localStorage.getItem('youtubeSearchData');
+    return searchData ? JSON.parse(searchData) : { count: 0, firstSearch: null };
+  };
+
+  const updateSearchCount = () => {
+    const now = Date.now();
+    const searchData = getSearchCount();
+    
+    if (!searchData.firstSearch) {
+      localStorage.setItem('youtubeSearchData', JSON.stringify({
+        count: 1,
+        firstSearch: now
+      }));
+    } else {
+      const newCount = searchData.count + 1;
+      localStorage.setItem('youtubeSearchData', JSON.stringify({
+        count: newCount,
+        firstSearch: searchData.firstSearch
+      }));
+      
+      if (newCount >=5  && (now - searchData.firstSearch < 600000)) {
+        setIsRateLimited(true);
+        const timeLeft = Math.ceil((600000 - (now - searchData.firstSearch)) / 1000 / 60);
+        return toast({
+          title: "Error",
+          description: `You can search again in ${timeLeft} minutes.`,
+          variant: 'destructive'
+        })
+      }
+    }
+  };
+
+  const checkRateLimit = () => {
+    const searchData = getSearchCount();
+    if (searchData.firstSearch && (Date.now() - searchData.firstSearch > 600000)) {
+      localStorage.removeItem('youtubeSearchData');
+      setIsRateLimited(false);
+    } else if (searchData.count >= 5) {
+      setIsRateLimited(true);
+    }
+  };
 
   // Click outside handler
   useEffect(() => {
@@ -55,7 +101,7 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
 
   // YouTube search function
   const searchYouTube = useCallback(async (query: string) => {
-    if (!query.trim()) {
+    if (!query.trim() || isRateLimited) {
       setResults([]);
       return;
     }
@@ -76,16 +122,22 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
     } finally {
       setIsLoading(false);
     }
-  }, [onSearchResults]);
+  }, [onSearchResults, isRateLimited]);
 
   // Debounce effect
   useEffect(() => {
+    if (isRateLimited) return;
+    
     const debounceTimer = setTimeout(() => {
       searchYouTube(searchQuery);
     }, 500);
 
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery, searchYouTube]);
+  }, [searchQuery, searchYouTube, isRateLimited]);
+
+  useEffect(() => {
+    checkRateLimit();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -102,6 +154,19 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
       setResults([]);
       setSearchQuery('');
       setIsDialogOpen(false);
+      updateSearchCount();
+    }
+  };
+
+  const handleRateLimitedClick = () => {
+    if (isRateLimited) {
+      const searchData = getSearchCount();
+      const timeLeft = Math.ceil((600000 - (Date.now() - searchData.firstSearch)) / 1000 / 60);
+      return toast({
+        title: "Error",
+        description: `You can search again in ${timeLeft} minutes.`,
+        variant: 'destructive'
+      })
     }
   };
 
@@ -109,18 +174,27 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
     <div ref={wrapperRef} className="relative w-full max-w-2xl mx-auto z-50">
       <form 
         onSubmit={(e) => e.preventDefault()} 
-        className="flex items-center border-2 border-purple-500/20 rounded-xl overflow-hidden w-full bg-gray-800/40 backdrop-blur-sm"
+        className={`flex items-center border-2 ${
+          isRateLimited ? 'border-red-500/30' : 'border-purple-500/20'
+        } rounded-xl overflow-hidden w-full bg-gray-800/40 backdrop-blur-sm`}
       >
         <input
           type="text"
-          placeholder="Search YouTube songs..."
+          placeholder={isRateLimited ? "Search limit reached" : "Search YouTube songs..."}
           value={searchQuery}
           onChange={handleInputChange}
           className="flex-1 px-6 py-4 text-base focus:outline-none bg-transparent text-white placeholder-purple-300/50"
+          disabled={isRateLimited}
+          onClick={handleRateLimitedClick}
         />
         <button
           type="submit"
-          className="bg-gradient-to-br from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-8 py-4 transition-all duration-300"
+          className={`${
+            isRateLimited 
+              ? 'bg-gray-600 cursor-not-allowed' 
+              : 'bg-gradient-to-br from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500'
+          } px-8 py-4 transition-all duration-300`}
+          disabled={isRateLimited}
         >
           <svg 
             className="w-6 h-6 text-white"
