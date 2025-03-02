@@ -138,31 +138,20 @@ export async function POST(req: NextRequest) {
             }
         });
 
-        if (existingStreamCount >= 10) {
+        if (existingStreamCount >= 20) {
             return NextResponse.json({
                 success: false,
                 message: "Space is full"
             }, { status: 400 });
         }
 
-        if (user.id !== data.creatorId) {
-            // Apply rate limits for non-creators
-            const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
             const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-
-            const recentStreams = await prisma.stream.count({
-                where: {
-                    userId: data.creatorId,
-                    addedBy: user.id,
-                    createAt: { gte: tenMinutesAgo }
-                }
-            });
 
             const duplicateStream = await prisma.stream.findFirst({
                 where: {
                     userId: data.creatorId,
                     url: data.url,
-                    // createAt: { gte: tenMinutesAgo }
+                    
                 }
             });
 
@@ -181,21 +170,27 @@ export async function POST(req: NextRequest) {
                 }
             });
 
+        if(data.creatorId !== user.id) {
             if (streamsLastTwoMinutes >= 2) {
                 return NextResponse.json({
                     success: false,
                     message: "You can only add 2 songs every 2 minutes"
                 }, { status: 400 });
             }
-
-            if (recentStreams >= 5) {
+        }
+        else{
+            if (streamsLastTwoMinutes >= 5) {
                 return NextResponse.json({
                     success: false,
-                    message: "You can only add 5 songs every 10 minutes"
+                    message: "You can only add 5 songs every 2 minutes"
                 }, { status: 400 });
             }
         }
 
+           
+
+            
+        
         // Create stream for both creators and other users
         const stream = await prisma.stream.create({
             data: {
