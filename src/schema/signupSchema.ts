@@ -5,7 +5,7 @@ import { emailSchema } from "./signInSchema";
 export const signUpSchema = z.object({
     email: emailSchema,
     name: z.string(),
-    provider: z.enum(["Credentials", "Google"]).default("Credentials"),
+    provider: z.enum(["Credentials", "google"]).default("Credentials"),
     password: z.string().optional(),
   }).superRefine((data, ctx) => {
     if (data.provider === "Credentials" && (!data.password || data.password.trim() === "")) {

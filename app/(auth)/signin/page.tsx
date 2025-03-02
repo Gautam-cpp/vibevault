@@ -115,9 +115,13 @@ export default function AuthTabs() {
   const handleGoogleSignIn = async () => {
     setLoading(true)
     try {
-      await signIn('google', { callbackUrl: '/home' })
-    } catch (err: any) {
-      setError(err.message)
+      await signIn('google', { 
+        callbackUrl: '/home',
+       
+      })
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Authentication failed')
+    } finally {
       setLoading(false)
     }
   }
