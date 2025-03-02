@@ -50,7 +50,7 @@ export  async function POST(req: Request) {
       data: {
         email,
         name,
-        provider,
+        provider: provider === "Credentials" ? "Credentials" : "Google",
         password: hashedPassword, 
       },
     });
