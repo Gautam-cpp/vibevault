@@ -53,24 +53,33 @@ export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id;
-        token.provider = user.provider;
-
-      
-        if (user.provider === "google") {
-          await prisma.user.upsert({
+        // For credential users, use the user.id directly
+        if (!account) {
+          token.id = user.id;
+          token.provider = user.provider;
+        } 
+        // For OAuth providers, we need to find or create the user in our DB
+        else if (account && account.provider === "google") {
+          token.provider = account.provider;
+          
+          // Find or create the user in the database
+          const dbUser = await prisma.user.upsert({
             where: { email: user.email || "" },
-            update: {}, // No updates necessary if the user exists
+            update: {}, 
             create: {
               email: user.email || "",
-              name: user.name || user.email?.split("@")[0], 
-              password: null, 
-              provider: "Google",
-        
+              name: user.name || user.email?.split("@")[0],
+              password: null,
+              provider: "Google", 
             },
+            
+            select: { id: true }
           });
+          
+          
+          token.id = dbUser.id;
         }
       }
       return token;
