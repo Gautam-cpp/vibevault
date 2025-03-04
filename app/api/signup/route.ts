@@ -19,18 +19,18 @@ export  async function POST(req: Request) {
     const { email, name, password, provider } = parsedResult.data;
 
    
-    const response = await axios.get(`https://api.zerobounce.net/v2/validate`, {
-      params: { api_key: process.env.BOUNCER_API_KEY, email },
-    });
+    // const response = await axios.get(`https://api.zerobounce.net/v2/validate`, {
+    //   params: { api_key: process.env.BOUNCER_API_KEY, email },
+    // });
 
     // console.log(response);
 
-    if(response.data.status !== "valid"){
-      return new Response(JSON.stringify({
-        success: false,
-        message: "Invalid Email"
-      }), { status: 400 });
-    }
+    // if(response.data.status !== "valid"){
+    //   return new Response(JSON.stringify({
+    //     success: false,
+    //     message: "Invalid Email"
+    //   }), { status: 400 });
+    // }
 
     const userExists = await prisma.user.findUnique({ where: { email } });
     if (userExists) {
