@@ -92,7 +92,7 @@ export default function SpacesCard({
       animate="animate"
       exit="exit"
       whileHover="hover"
-      className="group relative w-full overflow-hidden rounded-3xl border border-opacity-20 border-purple-300/30 bg-gradient-to-br from-gray-900/95 to-gray-800 backdrop-blur-xl"
+      className="group relative w-full overflow-hidden rounded-2xl border border-opacity-20 border-purple-300/30 bg-gradient-to-br from-gray-900/95 to-gray-800 backdrop-blur-xl sm:rounded-3xl"
     >
       <motion.div
         className="absolute inset-0 bg-gradient-to-t from-purple-500/10 to-transparent opacity-0"
@@ -100,7 +100,8 @@ export default function SpacesCard({
         transition={{ repeat: Infinity, duration: 3, repeatType: "mirror" }}
       />
 
-      <CardContent className="p-0">
+      {/* Hidden on mobile, shown on sm+ */}
+      <CardContent className="hidden p-0 sm:block">
         <motion.div
           className="relative h-48 w-full overflow-hidden sm:h-56 md:h-64"
           variants={imageVariants}
@@ -115,17 +116,24 @@ export default function SpacesCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
           <motion.div
-            className="absolute bottom-0 left-0 right-0 p-4 sm:p-6"
+            className="absolute bottom-0 left-0 right-0 p-6"
             initial={{ y: 20 }}
             animate={{ y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <h2 className="text-3xl font-black text-white drop-shadow-[0_2px_12px_rgba(128,90,213,0.8)] xs:text-4xl sm:text-5xl">
+            <h2 className="text-3xl font-black text-white drop-shadow-[0_2px_12px_rgba(128,90,213,0.8)] sm:text-4xl md:text-5xl">
               {space.name}
             </h2>
           </motion.div>
         </motion.div>
       </CardContent>
+
+      {/* Mobile-only title */}
+      <div className="block pt-6 sm:hidden">
+        <h2 className="px-4 text-2xl font-black text-white sm:text-3xl">
+          {space.name}
+        </h2>
+      </div>
 
       <CardFooter className="flex flex-col space-y-3 p-4 sm:flex-row sm:justify-between sm:space-x-4 sm:space-y-0 sm:p-6">
         <motion.div 
@@ -136,7 +144,7 @@ export default function SpacesCard({
           <Button
             variant="outline"
             size="sm"
-            className="relative w-full transform-gpu overflow-hidden rounded-xl border-2 border-purple-400/30 bg-purple-900/40 bg-[length:200%_auto] bg-[position:100%_50%] py-5 text-sm font-semibold text-white shadow-purple-500/20 sm:w-auto sm:py-7 sm:px-10 sm:text-base"
+            className="relative w-full transform-gpu overflow-hidden rounded-xl border-2 border-purple-400/30 bg-purple-900/40 bg-[length:200%_auto] bg-[position:100%_50%] py-4 text-sm font-semibold text-white shadow-purple-500/20 sm:w-auto sm:py-6 sm:px-10 sm:text-base"
             onClick={() => router.push(`/dashboard/${space.id}`)}
           >
             <span className="relative z-10">Explore Space</span>
@@ -150,7 +158,7 @@ export default function SpacesCard({
           <Button
             variant="outline"
             size="sm"
-            className="relative w-full transform-gpu overflow-hidden rounded-xl border-2 border-red-400/20 bg-red-900/30 px-2 py-5 text-sm font-medium text-red-100 backdrop-blur-sm hover:border-red-400/40 hover:bg-red-900/50 hover:shadow-[0_4px_30px_-8px_rgba(239,68,68,0.5)] sm:w-auto sm:py-7 sm:text-base"
+            className="relative w-full transform-gpu overflow-hidden rounded-xl border-2 border-red-400/20 bg-red-900/30 px-2 py-4 text-sm font-medium text-red-100 backdrop-blur-sm hover:border-red-400/40 hover:bg-red-900/50 hover:shadow-[0_4px_30px_-8px_rgba(239,68,68,0.5)] sm:w-auto sm:py-6 sm:text-base"
             onClick={() => handleDeleteClick(space.id)}
           >
             <Trash2 className="mr-1 h-5 w-5 transform transition-transform duration-300 group-hover/delete:scale-125 group-hover/delete:fill-red-400/20 sm:h-6 sm:w-6" />
@@ -177,7 +185,7 @@ export default function SpacesCard({
                 <Button
                   variant="outline"
                   onClick={() => setIsDialogOpen(false)}
-                  className="rounded-xl border-2 border-gray-600/30 bg-gray-800/40 px-6 py-4 text-base font-medium text-gray-200 hover:border-gray-500/50 hover:bg-gray-700/50 hover:text-white sm:px-8 sm:py-6"
+                  className="rounded-xl border-2 border-gray-600/30 bg-gray-800/40 px-4 py-3 text-base font-medium text-gray-200 hover:border-gray-500/50 hover:bg-gray-700/50 hover:text-white sm:px-8 sm:py-6"
                 >
                   Abort Mission
                 </Button>
@@ -185,7 +193,7 @@ export default function SpacesCard({
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   type="submit"
-                  className="rounded-xl border-2 border-red-500/30 bg-gradient-to-br from-red-600/90 to-red-700/90 px-6 py-4 text-base font-semibold text-white shadow-[0_4px_30px_-8px_rgba(239,68,68,0.6)] sm:px-8 sm:py-6"
+                  className="rounded-xl border-2 border-red-500/30 bg-gradient-to-br from-red-600/90 to-red-700/90 px-4 py-3 text-base font-semibold text-white shadow-[0_4px_30px_-8px_rgba(239,68,68,0.6)] sm:px-8 sm:py-6"
                   onClick={confirmDelete}
                 >
                   Engage Singularity

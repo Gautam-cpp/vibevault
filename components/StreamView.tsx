@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChevronUp, ChevronDown, Share2, Play, Trash2, X, MessageCircle, Instagram, Twitter, Music } from "lucide-react";
 
-// import { Appbar } from "./Appbar";
 import LiteYouTubeEmbed from "react-lite-youtube-embed";
 import "react-lite-youtube-embed/dist/LiteYouTubeEmbed.css";
 import YouTubePlayer from "youtube-player";
@@ -140,7 +139,6 @@ export default function StreamView({
         return json.activeStream?.stream || null;
       });
 
-   
       setIsCreator(json.isHost);
       setSpaceName(json.spaceName)
     } catch (error) {
@@ -175,8 +173,6 @@ export default function StreamView({
     };
   }, [currentVideo, videoPlayerRef]);
 
-  // TODO:
-
   useEffect(() => {
     if (playVideo && currentVideo) {
       const player = YouTubePlayer(videoPlayerRef.current || "");
@@ -184,9 +180,6 @@ export default function StreamView({
       player.playVideo();
     }
   }, [playVideo, currentVideo, videoPlayerRef]);
-
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,7 +196,6 @@ export default function StreamView({
     const isSpotify = SPOTIFY_REGEX.test(inputLink);
     
     if (!isYouTube && !isSpotify) {
-    
       return toast({
         title: "Error",
         description: "Please enter a valid URL",
@@ -274,7 +266,7 @@ export default function StreamView({
       method: "POST",
       body: JSON.stringify({
         streamId: id,
-        spaceId:spaceId
+        spaceId: spaceId
       }),
     });
   };
@@ -287,7 +279,6 @@ export default function StreamView({
           method: "GET",
         });
         const json = await data.json();
-        // console.log(json)
         setCurrentVideo(json.stream);
         setQueue((q) => q.filter((x) => x.id !== json.stream?.id));
       } catch (e) {
@@ -311,7 +302,6 @@ export default function StreamView({
           title: 'Success',
           description: 'Link copied to clipboard',
           variant: 'default'
-
         })
       }).catch((err) => {
         console.error('Could not copy text: ', err)
@@ -351,8 +341,7 @@ export default function StreamView({
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
-          },
-       
+        },
       });
       const data = await res.json();
       if (res.ok) {
@@ -408,8 +397,6 @@ export default function StreamView({
     }
   };
 
-
-
   const renderPreview = () => {
     if (!inputLink) return null;
 
@@ -449,7 +436,6 @@ export default function StreamView({
 
     return null;
   };
-  
 
   interface YouTubeSearchResult {
     id: {
@@ -467,54 +453,190 @@ export default function StreamView({
     };
   }
   const handleSearchResults = (results: YouTubeSearchResult[]) => {
-    // Handle the search results here
     console.log(results);
   };
 
-  // In the return JSX, update the input placeholder:
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 via-space-900 to-black text-gray-200 overflow-hidden">
       <div className="absolute inset-0 bg-[url('/star-pattern.svg')] opacity-20 animate-pulse-slow" />
       
-      <Appbar  />
+      <Appbar />
       
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-auto text-2xl bg-gradient-to-r from-indigo-400 to-violet-300 bg-clip-text font-bold text-transparent"
+        className="mx-auto text-center text-xl sm:text-2xl mt-2 mb-4 px-4 bg-gradient-to-r from-indigo-400 to-violet-300 bg-clip-text font-bold text-transparent"
       >
         <span className="drop-shadow-[0_4px_24px_rgba(129,140,248,0.4)]">
           {spaceName}
         </span>
       </motion.div>
 
-      <SearchBar 
-  onResultSelect={handleSearchResultSelect}
-  onSearchResults={handleSearchResults} 
-/>
+      {/* Search Bar with proper mobile spacing */}
+      <div className="px-4 sm:px-6 md:px-8 mb-4">
+        <SearchBar 
+          onResultSelect={handleSearchResultSelect}
+          onSearchResults={handleSearchResults} 
+        />
+      </div>
 
-      <div className="flex justify-center px-5 md:px-10 xl:px-20 relative z-10">
-        <div className="grid grid-cols-1 gap-y-5 lg:gap-x-5 lg:grid-cols-5 w-screen py-5 lg:py-8">
-          {/* Queue Column */}
-          <div className="col-span-3 order-2 lg:order-1">
-            <div className="flex flex-col md:flex-row justify-between mb-4 space-y-3 md:space-y-0">
+      <div className="flex justify-center px-4 sm:px-6 md:px-10 xl:px-20 relative z-10">
+        <div className="w-full grid grid-cols-1 gap-6 lg:grid-cols-12 py-4 lg:py-8">
+      
+          <div className="lg:col-span-5 xl:col-span-4 order-1 lg:order-2 space-y-6">
+            {/* Add Song Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="bg-gray-800/40 border-2 border-purple-500/20 shadow-xl">
+                <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    Add Cosmic Tune
+                  </h2>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <motion.div whileHover={{ scale: 1.02 }}>
+                      <Input
+                        type="text"
+                        placeholder="Paste YouTube or Spotify link here"
+                        value={inputLink}
+                        onChange={(e) => setInputLink(e.target.value)}
+                        className="rounded-xl bg-gray-900/30 border-2 border-purple-500/30 text-white placeholder-purple-300/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-500/50"
+                      />
+                    </motion.div>
+                    
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        disabled={loading}
+                        type="submit"
+                        className="w-full rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 py-4 sm:py-6 text-base sm:text-lg font-bold text-white shadow-[0_4px_30px_-8px_rgba(129,140,248,0.6)]"
+                      >
+                        {loading ? (
+                          <motion.span
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            Warping Song...
+                          </motion.span>
+                        ) : (
+                          "Add to Cosmic Queue"
+                        )}
+                      </Button>
+                    </motion.div>
+                    
+                    {renderPreview()}
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Now Playing Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="bg-gray-800/40 border-2 border-purple-500/20 shadow-xl">
+                <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white">
+                    Now Warping Through
+                  </h2>
+                  
+                  {currentVideo ? (
+                    <motion.div
+                      key={currentVideo.id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      {playVideo ? (
+                        <div
+                          ref={videoPlayerRef}
+                          className="w-full aspect-video rounded-xl overflow-hidden border-2 border-purple-500/20"
+                        />
+                      ) : (
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          className="relative overflow-hidden rounded-xl"
+                        >
+                          <Image
+                            src={currentVideo.bigImg}
+                            className="w-full aspect-video object-cover"
+                            alt={currentVideo.title}
+                            width={640}
+                            height={360}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
+                          <p className="absolute bottom-4 left-4 right-4 text-lg sm:text-xl font-bold text-white drop-shadow-lg">
+                            {currentVideo.title}
+                          </p>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-center py-6 sm:py-8 text-gray-400"
+                    >
+                      Space is silent...
+                    </motion.p>
+                  )}
+
+                  {playVideo && (
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        disabled={playNextLoader}
+                        onClick={playNext}
+                        className="w-full rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 py-4 sm:py-6 text-base sm:text-lg font-bold text-white shadow-[0_4px_30px_-8px_rgba(129,140,248,0.6)]"
+                      >
+                        {playNextLoader ? (
+                          <motion.span
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            Engaging Hyperdrive...
+                          </motion.span>
+                        ) : (
+                          <>
+                            <Play className="mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6" />
+                            Next Cosmic Jump
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Queue Column - Appears second on mobile, first on desktop */}
+          <div className="lg:col-span-7 xl:col-span-8 order-2 lg:order-1">
+            <div className="flex flex-col sm:flex-row justify-between mb-4 gap-3 sm:gap-0">
               <motion.h2
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-2xl font-bold text-white"
+                className="text-xl sm:text-2xl font-bold text-white"
               >
                 Upcoming Songs
               </motion.h2>
               
               <motion.div
-                className="flex space-x-2"
+                className="flex flex-wrap sm:flex-nowrap gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button className="rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 px-6 py-5 text-white shadow-[0_0_40px_-10px_rgba(129,140,248,0.5)] hover:shadow-[0_0_60px_-15px_rgba(129,140,248,0.6)]">
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-grow sm:flex-grow-0">
+                      <Button className="w-full sm:w-auto rounded-xl bg-gradient-to-br from-indigo-600 to-purple-700 px-4 sm:px-6 py-2 sm:py-3 text-white shadow-[0_0_40px_-10px_rgba(129,140,248,0.5)] hover:shadow-[0_0_60px_-15px_rgba(129,140,248,0.6)]">
                         <Share2 className="mr-2 h-4 w-4" /> Share
                       </Button>
                     </motion.div>
@@ -544,12 +666,12 @@ export default function StreamView({
                 </DropdownMenu>
 
                 {isCreator && (
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-grow sm:flex-grow-0">
                     <Button
                       onClick={() => setIsEmptyQueueDialogOpen(true)}
-                      className="rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 px-6 py-5 text-white shadow-[0_0_40px_-10px_rgba(156,163,175,0.3)]"
+                      className="w-full sm:w-auto rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 px-4 sm:px-6 py-2 sm:py-3 text-white shadow-[0_0_40px_-10px_rgba(156,163,175,0.3)]"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" /> Empty Queue
+                      <Trash2 className="mr-2 h-4 w-4" /> Empty
                     </Button>
                   </motion.div>
                 )}
@@ -577,54 +699,33 @@ export default function StreamView({
                   {queue.map((video, index) => (
                     <motion.div
                       key={video.id}
-                      // variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      custom={index}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
                       layout
                     >
                       <Card className="bg-gray-800/40 border-2 border-purple-500/20 hover:border-purple-400/40 shadow-xl hover:shadow-2xl transition-all">
-                        <CardContent className="p-4 flex flex-col md:flex-row md:space-x-4">
-                          <motion.div
-                            className="relative overflow-hidden rounded-lg"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            <Image
-                              width={160}
-                              height={160}
-                              src={video.smallImg}
-                              alt={`Thumbnail for ${video.title}`}
-                              className="w-40 h-40 object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
-                          </motion.div>
-                          
-                          <div className="flex-grow space-y-3">
-                            <h3 className="font-semibold text-white text-lg">
-                              {video.title}
-                            </h3>
-                            <div className="flex items-center space-x-3">
-                              <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                              >
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleVote(video.id, !video.haveUpvoted)}
-                                  className="rounded-lg bg-gray-800/60 border-purple-500/30 text-white"
-                                >
-                                  {video.haveUpvoted ? (
-                                    <ChevronDown className="h-4 w-4" />
-                                  ) : (
-                                    <ChevronUp className="h-4 w-4" />
-                                  )}
-                                  <span className="ml-2">{video.upvotes}</span>
-                                </Button>
-                              </motion.div>
-                              
-                              {isCreator && (
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-3 sm:space-y-0">
+                            <motion.div
+                              className="relative overflow-hidden rounded-lg mx-auto sm:mx-0"
+                              whileHover={{ scale: 1.05 }}
+                            >
+                              <Image
+                                width={120}
+                                height={120}
+                                src={video.smallImg}
+                                alt={`Thumbnail for ${video.title}`}
+                                className="w-full sm:w-32 h-32 object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent" />
+                            </motion.div>
+                            
+                            <div className="flex-grow space-y-2 sm:space-y-3">
+                              <h3 className="font-semibold text-white text-base sm:text-lg text-center sm:text-left line-clamp-2">
+                                {video.title}
+                              </h3>
+                              <div className="flex items-center justify-center sm:justify-start space-x-3">
                                 <motion.div
                                   whileHover={{ scale: 1.1 }}
                                   whileTap={{ scale: 0.9 }}
@@ -632,13 +733,34 @@ export default function StreamView({
                                   <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => removeSong(video.id)}
-                                    className="rounded-lg bg-red-800/40 border-red-500/30 text-red-200"
+                                    onClick={() => handleVote(video.id, !video.haveUpvoted)}
+                                    className="rounded-lg bg-gray-800/60 border-purple-500/30 text-white"
                                   >
-                                    <X className="h-4 w-4" />
+                                    {video.haveUpvoted ? (
+                                      <ChevronDown className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronUp className="h-4 w-4" />
+                                    )}
+                                    <span className="ml-2">{video.upvotes}</span>
                                   </Button>
                                 </motion.div>
-                              )}
+                                
+                                {isCreator && (
+                                  <motion.div
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                  >
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => removeSong(video.id)}
+                                      className="rounded-lg bg-red-800/40 border-red-500/30 text-red-200"
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                  </motion.div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </CardContent>
@@ -649,187 +771,45 @@ export default function StreamView({
               )}
             </AnimatePresence>
           </div>
-
-          {/* Control Column */}
-          <div className="col-span-2 order-1 lg:order-2 space-y-6">
-            {/* Add Song Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <Card className="bg-gray-800/40 border-2 border-purple-500/20 shadow-xl">
-                <CardContent className="p-6 space-y-6">
-                  <h2 className="text-2xl font-bold text-white">
-                    Add Cosmic Tune
-                  </h2>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <motion.div whileHover={{ scale: 1.02 }}>
-                    <Input
-                        type="text"
-                        placeholder="Paste YouTube or Spotify link here"
-                        value={inputLink}
-                        onChange={(e) => setInputLink(e.target.value)}
-                        className="rounded-xl bg-gray-900/30 border-2 border-purple-500/30 text-white placeholder-purple-300/50 focus:border-purple-400 focus:ring-2 focus:ring-purple-500/50"
-                      />
-                                           
-                    </motion.div>
-                    
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Button
-                        disabled={loading}
-                        type="submit"
-                        className="w-full rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 py-6 text-lg font-bold text-white shadow-[0_4px_30px_-8px_rgba(129,140,248,0.6)]"
-                      >
-                        {loading ? (
-                          <motion.span
-                            animate={{ opacity: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            Warping Song...
-                          </motion.span>
-                        ) : (
-                          "Add to Cosmic Queue"
-                        )}
-                      </Button>
-                    </motion.div>
-                    
-                    {renderPreview()}
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            {/* Now Playing Card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Card className="bg-gray-800/40 border-2 border-purple-500/20 shadow-xl">
-                <CardContent className="p-6 space-y-6">
-                  <h2 className="text-2xl font-bold text-white">
-                    Now Warping Through
-                  </h2>
-                  
-                  {currentVideo ? (
-                    <motion.div
-                      key={currentVideo.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      {playVideo ? (
-                        <div
-                          ref={videoPlayerRef}
-                          className="w-full aspect-video rounded-xl overflow-hidden border-2 border-purple-500/20"
-                        />
-                      ) : (
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          className="relative overflow-hidden rounded-xl"
-                        >
-                          <Image
-                            src={currentVideo.bigImg}
-                            className="w-full aspect-video object-cover"
-                            alt={currentVideo.title}
-                            width={640}
-                            height={360}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-transparent to-transparent" />
-                          <p className="absolute bottom-4 left-4 right-4 text-xl font-bold text-white drop-shadow-lg">
-                            {currentVideo.title}
-                          </p>
-                        </motion.div>
-                      )}
-                    </motion.div>
-                  ) : (
-                    <motion.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="text-center py-8 text-gray-400"
-                    >
-                      Space is silent...
-                    </motion.p>
-                  )}
-
-                  {playVideo && (
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Button
-                        disabled={playNextLoader}
-                        onClick={playNext}
-                        className="w-full rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 py-6 text-lg font-bold text-white shadow-[0_4px_30px_-8px_rgba(129,140,248,0.6)]"
-                      >
-                        {playNextLoader ? (
-                          <motion.span
-                            animate={{ opacity: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            Engaging Hyperdrive...
-                          </motion.span>
-                        ) : (
-                          <>
-                            <Play className="mr-3 h-6 w-6" />
-                            Next Cosmic Jump
-                          </>
-                        )}
-                      </Button>
-                    </motion.div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
         </div>
       </div>
 
       {/* Empty Queue Dialog */}
-     
-<Dialog open={isEmptyQueueDialogOpen}
-        onOpenChange={setIsEmptyQueueDialogOpen}>
-        <DialogContent className="border-0 bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-xl">
-          <DialogHeader>
-          <DialogTitle className="text-3xl font-bold text-purple-200/90 text-center">
-                🛑 Cosmic Purge
-                  </DialogTitle>
-                  <DialogDescription className="mt-3 text-lg text-gray-300/80">
-                    This will erase all songs from the space-time queue continuum.
-                    <span className="block mt-2 text-red-400/80">
-                      Warning: This action cannot be undone!
-                    </span>
-                  </DialogDescription>
-          </DialogHeader>
-          
-          
-
-                <DialogFooter className="mt-8">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEmptyQueueDialogOpen(false)}
-                      className="rounded-xl border-2 border-gray-600/30 bg-gray-800/40 px-8 py-6 text-lg"
-                    >
-                      Abort Sequence
-                    </Button>
-                  </motion.div>
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button
-                      onClick={emptyQueue}
-                      className="rounded-xl bg-gradient-to-br from-red-600 to-pink-700 px-8 py-6 text-lg font-bold shadow-[0_4px_30px_-8px_rgba(239,68,68,0.6)]"
-                    >
-                      Initiate Purge
-                    </Button>
-                  </motion.div>
-                </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-
+      <Dialog open={isEmptyQueueDialogOpen} onOpenChange={setIsEmptyQueueDialogOpen}>
+  <DialogContent className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border-0 bg-gradient-to-br from-gray-900 to-gray-800 backdrop-blur-xl w-[90%] sm:w-[95%] max-w-sm sm:max-w-md p-4 sm:p-6 rounded-xl shadow-2xl">
+    <DialogHeader>
+      <DialogTitle className="text-2xl font-bold text-purple-200/90 text-center">
+        🛑 Cosmic Purge
+      </DialogTitle>
+      <DialogDescription className="mt-2 text-center text-gray-300/80">
+        This will erase all songs from the space-time queue continuum.
+        <span className="block mt-2 text-red-400/80 font-medium">
+          Warning: This action cannot be undone!
+        </span>
+      </DialogDescription>
+    </DialogHeader>
+    
+    <DialogFooter className="mt-6 flex gap-3 flex-row ">
+      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <Button
+          variant="outline"
+          onClick={() => setIsEmptyQueueDialogOpen(false)}
+          className="w-full rounded-lg border border-gray-600/40 bg-gray-800/50 py-3 font-medium text-gray-200 hover:bg-gray-700/60 transition"
+        >
+          Abort Sequence
+        </Button>
+      </motion.div>
+      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
+        <Button
+          onClick={emptyQueue}
+          className="w-full rounded-lg bg-gradient-to-r from-red-600 to-pink-700 py-3 font-medium text-white shadow-lg shadow-red-600/30"
+        >
+          Initiate Purge
+        </Button>
+      </motion.div>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
       {/* Background Effects */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent opacity-20 animate-pulse-slow" />
