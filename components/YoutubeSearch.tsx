@@ -130,7 +130,7 @@ const SearchBar = ({ onSearchResults, onResultSelect }: SearchBarProps) => {
     
     const debounceTimer = setTimeout(() => {
       searchYouTube(searchQuery);
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(debounceTimer);
   }, [searchQuery, searchYouTube, isRateLimited]);
