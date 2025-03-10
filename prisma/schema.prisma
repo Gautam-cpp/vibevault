@@ -20,6 +20,8 @@ model User {
   email        String   @unique
   name         String?
   password     String?
+  otp          String?
+  createAt     DateTime @default(now())
   provider     Provider
   streams      Stream[] @relation("user")
   upvotes      Upvote[]
