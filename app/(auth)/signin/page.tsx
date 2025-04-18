@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function AuthTabs() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("signup")
+  const [activeTab, setActiveTab] = useState("signin")
   const [formState, setFormState] = useState({
     email: '',
     password: '',
@@ -124,7 +124,7 @@ export default function AuthTabs() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-zinc-900 overflow-hidden relative">
-      {/* Dynamic Background Elements */}
+      
       <div className="absolute inset-0 overflow-hidden">
         <div
           className="absolute w-[200vw] h-[200vh] opacity-5 animate-rotate"
@@ -163,7 +163,7 @@ export default function AuthTabs() {
           className="relative group w-[480px]"
           onValueChange={setActiveTab}
         >
-          {/* Tabs List */}
+        
           <TabsList className="grid w-full grid-cols-2 bg-transparent backdrop-blur-xl border border-white/10 rounded-xl pb-12 mb-8 shadow-2xl shadow-purple-500/10 relative overflow-visible">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-xl" />
             <div
@@ -319,7 +319,7 @@ export default function AuthTabs() {
               </Card>
             </TabsContent>
 
-            {/* Sign In Card */}
+            
             <TabsContent value="signin">
               <Card className="bg-black/50 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-purple-500/10 rounded-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 pointer-events-none" />

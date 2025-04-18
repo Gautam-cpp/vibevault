@@ -8,7 +8,7 @@ const About = () => {
     <>
      
 
-      {/* Gradient Background Layers */}
+     
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent opacity-20 animate-pulse-slow" />
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/10 to-transparent opacity-30" />
@@ -66,7 +66,7 @@ const About = () => {
 
           <footer className="mt-16 border-t border-white/10 pt-8 text-center">
             <p className="text-lg text-gray-400 hover:text-purple-300 transition-colors">
-              Crafted with <span className="text-pink-400 animate-pulse">♥</span> by Gautam Prajapat
+              Crafted with <span className="text-pink-400 animate-pulse">♥</span>by <a href="https://github.com/gautam-cpp" target="_blank"> Gautam Prajapat</a> 
             </p>
           </footer>
         </div>

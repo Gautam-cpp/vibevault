@@ -8,7 +8,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user.id) {
-    // Redirect unauthenticated users to the login page
+    
     redirect('/signin');
   }
 

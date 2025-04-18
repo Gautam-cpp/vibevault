@@ -19,16 +19,10 @@ export default function Dashboard() {
                         <p className="text-lg md:text-2xl text-white max-w-[900px]">
                             Stream, share, and let everyone vote for the next track.
                         </p>
-                        <div className="flex justify-center md:justify-start">
-                            <Link href="/signin">
-                                <Button className="bg-slate-100 text-black rounded-xl px-8 py-3 hover:bg-slate-400 hover:text-black text-xl">
-                                    Sign In
-                                </Button>
-                            </Link>
-                        </div>
+                        
                     </div>
 
-                    {/* Image Container */}
+                   
                     <div className="flex-1 flex items-center justify-center p-6 order-1 md:order-2 mt-8 md:mt-0 w-full md:w-auto">
                         <div className="relative w-full max-w-[300px] md:max-w-[600px]">
                             <Image 

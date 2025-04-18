@@ -101,6 +101,6 @@ export const authOptions: NextAuthOptions = {
   // Optional: Uncomment if you plan to add custom pages
   pages: {
     signIn: "/signin",
-    error: "/auth/error", // Add custom error page if needed
+    error: "/auth/error", 
   },
 };
